@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Realtime Room Chat</title>
+    <!-- Socket.IO Client Library -->
+    <script src="https://socket.io"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .chat-container { width: 400px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #28a745; color: white; border: none; font-weight: bold; cursor: pointer; }
+        #chat-section { display: none; }
+        #messages { height: 250px; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 10px; background: #fafafa; }
+        .system-msg { text-align: center; color: #888; font-size: 12px; font-style: italic; }
+        .msg-box { display: flex; gap: 5px; }
+        .msg-box input { width: 80%; margin: 0; }
+        .msg-box button { width: 20%; margin: 0; background: #007bff; }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <!-- Login Form -->
+    <div id="login-section">
+        <h2>Join Private Chat</h2>
+        <input type="text" id="room-code" placeholder="Enter Room Code">
+        <input type="text" id="username" placeholder="Enter Your Name">
+        <button onclick="connectToRoom()">Join Room</button>
+    </div>
+
+    <!-- Chat Section -->
+    <div id="chat-section">
+        <h3 id="room-title">Room: </h3>
+        <div id="messages"></div>
+        <div class="msg-box">
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button onclick="submitMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const socket = io();
+    let currentRoom = "";
+    let currentUsername = "";
+
+    function connectToRoom() {
+        currentRoom = document.getElementById('room-code').value.trim();
+        currentUsername = document.getElementById('username').value.trim();
+
+        if (currentRoom && currentUsername) {
+            // Server ko join karne ka signal bhejein
+            socket.emit('join_room', { username: currentUsername, room: currentRoom });
+            
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('chat-section').style.display = 'block';
+            document.getElementById('room-title').innerText = "Room Code: " + currentRoom;
+        } else {
+            alert("Please fill both fields!");
+        }
+    }
+
+    function submitMessage() {
+        const input = document.getElementById('message-input');
+        const text = input.value.trim();
+        if (text) {
+            // Server ko message bhejein
+            socket.emit('send_message', { room: currentRoom, username: currentUsername, message: text });
+            input.value = "";
+        }
+    }
+
+    // Server se system notifications receive karna
+    socket.on('status', function(data) {
+        const msgDiv = document.getElementById('messages');
+        msgDiv.innerHTML += `<p class="system-msg">${data.msg}</p>`;
+        msgDiv.scrollTop = msgDiv.scrollHeight;
+    });
+
+    // Server se dosto ke messages receive karna
+    socket.on('receive_message', function(data) {
+        const msgDiv = document.getElementById('messages');
+        const isMe = data.username === currentUsername;
+        msgDiv.innerHTML += `<p><strong>${isMe ? 'You' : data.username}:</strong> ${data.message}</p>`;
+        msgDiv.scrollTop = msgDiv.scrollHeight;
+    });
+</script>
+</body>
+  </html>
+  
