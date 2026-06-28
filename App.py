@@ -4,6 +4,35 @@ app = Flask(__name__)
 
 # HTML, CSS और JavaScript कोड (लॉगिन फॉर्म, कैमरा और लूडो गेम के साथ)
 HTML_CODE = """
+# इसे फ़ाइल के सबसे नीचे पेस्ट करें
+
+CONTACT_HTML = """
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background-color: #1a1a1a; color: white; padding: 50px; }
+        .box { background: #2a2a2a; max-width: 400px; margin: auto; padding: 30px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.5); }
+        .back-btn { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>हमसे संपर्क करें</h1>
+        <p>सहायता के लिए आप हमसे संपर्क कर सकते हैं।</p>
+        <a href="/" class="back-btn">मुख्य पेज पर वापस जाएँ</a>
+    </div>
+</body>
+</html>
+"""
+
+@app.route('/contact')
+def contact_page():
+    return render_template_string(CONTACT_HTML)
+    
 <!DOCTYPE html>
 <html lang="hi">
 <head>
