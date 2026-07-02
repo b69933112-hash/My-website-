@@ -1,5 +1,5 @@
 from flask import Flask, render_template_string
-
+print("naman mishra")
 app = Flask(__name__)
 
 # HTML, CSS और JavaScript कोड (लॉगिन फॉर्म, कैमरा और लूडो गेम के साथ)
